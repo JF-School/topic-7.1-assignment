@@ -7,10 +7,18 @@ namespace topic_7._1_assignment
         static void Main(string[] args)
         {
             Random generator = new Random();
+            List<string> flips = new List<string>();
+            flips.Add("heads");
+            flips.Add("tails");
+            List<string> rouletteColour = new List<string>();
+            rouletteColour.Add("red");
+            rouletteColour.Add("black");
             bool done = false;
+            bool game = false;
             double bet;
             int decision;
             double balance = 100;
+
             Console.WriteLine("Welcome to the CASINO OF ALDWORTH");
             Console.WriteLine("You have " + balance.ToString("C") + " dollars");
             Console.WriteLine();
@@ -35,7 +43,7 @@ namespace topic_7._1_assignment
                 Console.WriteLine("Lose all your money, and you lose!");
                 Console.WriteLine();
                 Console.WriteLine("You have " + balance.ToString("C"));
-                while (!done)
+                while (!game)
                 {
                     Console.Write("How much would you like to bet? ");
                     while (!Double.TryParse(Console.ReadLine(), out bet) || (bet > balance) || (bet < 0))
@@ -44,47 +52,31 @@ namespace topic_7._1_assignment
                         Console.Write("How much would you like to bet? ");
                     }
                     Console.Write("Heads or tails? ");
-                    string coinFlip = Console.ReadLine().ToLower();
+                    string userFlip = Console.ReadLine().ToLower();
                     Console.WriteLine();
                     Console.WriteLine("Flipping coin...");
-                    int coinFlipInt = generator.Next(1, 3);
-                    if ((coinFlipInt == 1) && (coinFlip == "heads"))
+                    string coinFlip = flips[generator.Next(2)];
+                    if (coinFlip == userFlip)
                     {
                         Console.WriteLine();
-                        Console.WriteLine("HEADS!");
-                        Console.WriteLine("Good job!");
-                        balance = (balance + bet);
+                        Console.WriteLine(coinFlip);
+                        Console.WriteLine("Congrats! You got it correct!");
+                        balance += bet;
                         Console.WriteLine("You now have " + balance.ToString("C"));
                     }
-                    else if ((coinFlipInt == 2) && (coinFlip == "tails"))
+                    else if (coinFlip != userFlip)
                     {
                         Console.WriteLine();
-                        Console.WriteLine("TAILS!");
-                        Console.WriteLine("Congrats!");
-                        balance = (balance + bet);
+                        Console.WriteLine(coinFlip);
+                        Console.WriteLine("Incorrect, unfortunateley.");
+                        balance -= bet;
                         Console.WriteLine("You now have " + balance.ToString("C"));
                     }
-                    else if ((coinFlipInt == 1) && (coinFlip == "tails"))
-                    {
-                        Console.WriteLine();
-                        Console.WriteLine("HEADS!");
-                        Console.WriteLine("Rest in Peace!");
-                        balance = (balance - bet);
-                        Console.WriteLine("You now have " + balance.ToString("C"));
-                    }
-                    else if ((coinFlipInt == 2) && (coinFlip == "heads"))
-                    {
-                        Console.WriteLine();
-                        Console.WriteLine("TAILS!");
-                        Console.WriteLine("Oof!");
-                        balance = (balance - bet);
-                        Console.WriteLine("You now have " + balance.ToString("C"));
-                    }
-                    else if ((coinFlip == "quit") || (balance == 0))
+                    else if ((userFlip == "quit") || (balance == 0))
                     {
                         Console.WriteLine();
                         Console.WriteLine("Thanks for playing!");
-                        done = true;
+                        game = true;
                     }
                     else
                     {
@@ -103,7 +95,7 @@ namespace topic_7._1_assignment
                 Console.WriteLine("You chose 'ROULETTE' at the CASINO OF ALDWORTH");
                 Console.WriteLine("You have a various of options on where to bet.");
                 Console.WriteLine();
-                while (!done)
+                while (!game)
                 {
                     int betDecision;
                     Console.WriteLine("You have " + balance.ToString("C"));
@@ -125,6 +117,7 @@ namespace topic_7._1_assignment
                         Console.WriteLine("Invalid number");
                         Console.Write("How much would you like to bet? ");
                     }
+                    // specific number
                     if (betDecision == 1)
                     {
                         int betNumber;
@@ -133,7 +126,7 @@ namespace topic_7._1_assignment
                         Console.WriteLine("You chose 'Specific Number'");
                         Console.WriteLine("Pick a number between 0-36");
                         Console.Write("What number are you betting on? ");
-                        while (!Int32.TryParse(Console.ReadLine(), out betNumber) || (betNumber < 0) || (betNumber > 36))
+                        while (!Int32.TryParse(Console.ReadLine(), out betNumber) || (betNumber <= 0) || (betNumber > 36))
                         {
                             Console.WriteLine("Invalid number");
                             Console.Write("What number are you betting on? ");
@@ -142,8 +135,120 @@ namespace topic_7._1_assignment
                         {
                             Console.WriteLine();
                             Console.WriteLine("You got the 1/36 chance of getting the right number!");
+                            Console.WriteLine("The number was " + number);
                             Console.WriteLine("Your balance is now your bet doubled!");
                             balance = (balance + (bet * 2));
+                            Console.WriteLine("You now have " + balance.ToString("C"));
+                            Console.WriteLine("Press ENTER to continue");
+                            Console.ReadLine();
+                            Console.Clear();
+                        }
+                        else if (betNumber != number)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("RIP! The number was " + number);
+                            balance -= bet;
+                            Console.WriteLine("You now have " + balance.ToString("C"));
+                            Console.WriteLine("Press ENTER to continue");
+                            Console.ReadLine();
+                            Console.Clear();
+                        }
+                        else if (betNumber == 0)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("You lose all your money!");
+                            balance = 0;
+                            Console.WriteLine("You now have " + balance.ToString("C"));
+                            Console.WriteLine("Press ENTER to continue");
+                            Console.ReadLine();
+                            Console.Clear();
+                        }
+                    }
+                    // red or black
+                    else if (betDecision == 2)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("You chose 'Red or Black'");
+                        Console.WriteLine("Choose... Red or Black");
+                        Console.Write("Which colour are you choosing? ");
+                        string colour = Console.ReadLine().ToLower();
+                        string randColour = rouletteColour[generator.Next(2)];
+                        if (randColour == colour)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine(randColour.ToUpper() + "! GOOD JOB!");
+                            balance += bet;
+                            Console.WriteLine("You now have " + balance.ToString("C"));
+                            Console.WriteLine("Press ENTER to continue");
+                            Console.ReadLine();
+                            Console.Clear();
+                        }
+                        else if (randColour != colour)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("It was " + randColour + ". You guessed wrong.");
+                            balance -= bet;
+                            Console.WriteLine("You now have " + balance.ToString("C"));
+                            Console.WriteLine("Press ENTER to continue");
+                            Console.ReadLine();
+                            Console.Clear();
+                        }
+                    }
+                    // even or odd
+                    else if (betDecision == 3)
+                    {
+                        int evenOddNumber = generator.Next(0, 36);
+                        Console.WriteLine();
+                        Console.WriteLine("You chose 'Even or Odd'");
+                        Console.WriteLine("You must guess whether the number chosen will be even or odd.");
+                        Console.Write("Even or Odd? ");
+                        string evenOddGuess = Console.ReadLine().ToLower();
+                        if ((evenOddNumber % 2 == 0) && (evenOddGuess == "even"))
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("The number was " + evenOddNumber + " and that is " + evenOddGuess + "!");
+                            balance += bet;
+                            Console.WriteLine("You now have " + balance.ToString("C"));
+                            Console.WriteLine("Press ENTER to continue");
+                            Console.ReadLine();
+                            Console.Clear();
+                        }
+                        else if ((evenOddNumber % 2 == 0) && (evenOddGuess == "odd"))
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("The number was " + evenOddNumber + " and that isn't " + evenOddGuess + "!");
+                            balance -= bet;
+                            Console.WriteLine("You now have " + balance.ToString("C"));
+                            Console.WriteLine("Press ENTER to continue");
+                            Console.ReadLine();
+                            Console.Clear();
+                        }
+                        else if ((evenOddNumber % 2 == 1) && (evenOddGuess == "odd"))
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("The number was " + evenOddNumber + " and that is " + evenOddGuess + "!");
+                            balance += bet;
+                            Console.WriteLine("You now have " + balance.ToString("C"));
+                            Console.WriteLine("Press ENTER to continue");
+                            Console.ReadLine();
+                            Console.Clear();
+                        }   
+                        else if ((evenOddNumber % 2 == 1) && (evenOddGuess == "even"))
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("The number was " + evenOddNumber + " and that isn't " + evenOddGuess + "!");
+                            balance -= bet;
+                            Console.WriteLine("You now have " + balance.ToString("C"));
+                            Console.WriteLine("Press ENTER to continue");
+                            Console.ReadLine();
+                            Console.Clear();
+                        }
+                        else if (evenOddNumber == 0)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("The number was " + evenOddNumber + " which means you lose all your money!");
+                            balance = 0;
+                            Console.WriteLine("You now have " + balance.ToString("C"));
                             Console.WriteLine("Press ENTER to continue");
                             Console.ReadLine();
                             Console.Clear();
@@ -151,45 +256,81 @@ namespace topic_7._1_assignment
                         else
                         {
                             Console.WriteLine();
-                            Console.WriteLine("RIP!");
-                            balance = (balance - bet);
+                            Console.WriteLine("Invalid input!");
+                        }
+                    }
+                    // high or low
+                    else if (betDecision == 4)
+                    {
+                        int hiLowNumber = generator.Next(0, 37);
+                        Console.WriteLine();
+                        Console.WriteLine("You chose 'High or Low'");
+                        Console.WriteLine("You must guess if the number will be in the low-range of numbers, or the high-range of numbers.");
+                        Console.WriteLine("Low range: 1-18. High range: 19-36");
+                        Console.Write("High or Low? ");
+                        string hiGuess = Console.ReadLine().ToLower();
+                        if ((hiLowNumber <= 18) && (hiGuess == "low"))
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("The number was " + hiLowNumber + " which is in the " + hiGuess + " range.");
+                            balance += bet;
+                            Console.WriteLine("You now have " + balance.ToString("C"));
                             Console.WriteLine("Press ENTER to continue");
                             Console.ReadLine();
                             Console.Clear();
                         }
-                    }
-                    if (betDecision == 2)
-                    {
-                        int randColour = generator.Next(1, 3);
-                        Console.WriteLine();
-                        Console.WriteLine("You chose 'Red or Black'");
-                        Console.WriteLine("Choose... Red or Black");
-                        Console.Write("Which colour are you choosing? ");
-                        string colour = Console.ReadLine().ToLower();
-                        if ((randColour == 1) && (colour == "red"))
+                        else if ((hiLowNumber >= 19) && (hiGuess == "high"))
                         {
-                            Console.WriteLine("RED! GOOD JOB!");
-                            balance = (balance + bet);
+                            Console.WriteLine();
+                            Console.WriteLine("The number was " + hiLowNumber + " which is in the " + hiGuess + " range.");
+                            balance += bet;
+                            Console.WriteLine("You now have " + balance.ToString("C"));
+                            Console.WriteLine("Press ENTER to continue");
+                            Console.ReadLine();
+                            Console.Clear();
                         }
-                        else if ((randColour == 2) && (colour == "black"))
+                        else if ((hiLowNumber <= 18) && (hiGuess == "high"))
                         {
-                            Console.WriteLine("BLACK! GOOD JOB!");
-                            balance = (balance + bet);
+                            Console.WriteLine();
+                            Console.WriteLine("The number was " + hiLowNumber + " which isn't in the " + hiGuess + " range.");
+                            balance -= bet;
+                            Console.WriteLine("You now have " + balance.ToString("C"));
+                            Console.WriteLine("Press ENTER to continue");
+                            Console.ReadLine();
+                            Console.Clear();
                         }
-                        else if ((randColour == 1) && (colour == "black"))
+                        else if ((hiLowNumber >= 19) && (hiGuess == "low"))
                         {
-                            Console.WriteLine("It was red. You guessed wrong");
-                            balance = (balance - bet);
+                            Console.WriteLine();
+                            Console.WriteLine("The number was " + hiLowNumber + " which isn't in the " + hiGuess + " range.");
+                            balance -= bet;
+                            Console.WriteLine("You now have " + balance.ToString("C"));
+                            Console.WriteLine("Press ENTER to continue");
+                            Console.ReadLine();
+                            Console.Clear();
                         }
-                        else if ((randColour == 2) && (colour == "red"))
+                        else if (hiLowNumber == 0)
                         {
-                            Console.WriteLine("It was black. You guessed wrong");
-                            balance = (balance - bet);
-                        }    
+                            Console.WriteLine();
+                            Console.WriteLine("The number was " + hiLowNumber + " which means you lose all your money!");
+                            balance = 0;
+                            Console.WriteLine("You now have " + balance.ToString("C"));
+                            Console.WriteLine("Press ENTER to continue");
+                            Console.ReadLine();
+                            Console.Clear();
+                        }
                         else
                         {
-                            Console.WriteLine("Invalid input");
+                            Console.WriteLine();
+                            Console.WriteLine("Invalid input!");
                         }
+                    }
+                    // quit
+                    else if ((betDecision == 5) || (balance == 0))
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("See you later!");
+                        game = true;
                     }
                 }
             }
